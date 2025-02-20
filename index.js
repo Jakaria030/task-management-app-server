@@ -24,7 +24,15 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        const tasksCollection = client.db("tasksManagementApp").collection("tasks");
+        const taskCollection = client.db("taskManagementApp").collection("tasks");
+
+        // task add
+        app.post("/tasks", async(req, res) => {
+            const task = req.body;
+            const result = await taskCollection.insertOne(task);
+            
+            res.send(result);
+        });
 
         console.log("Database is connected to MongoDB!");
     } finally {
