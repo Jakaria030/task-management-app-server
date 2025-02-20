@@ -34,6 +34,15 @@ async function run() {
             res.send(result);
         });
 
+        // get task
+        app.get("/tasks", async(req, res) => {
+            const {email} = req.query;
+            const query = {email: email};
+            const result = await taskCollection.find(query).toArray();
+
+            res.send(result);
+        })
+
         console.log("Database is connected to MongoDB!");
     } finally {
         // await client.close();
