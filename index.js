@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 dotenv.config();
 
@@ -27,21 +27,36 @@ async function run() {
         const taskCollection = client.db("taskManagementApp").collection("tasks");
 
         // task add
-        app.post("/tasks", async(req, res) => {
+        app.post("/tasks", async (req, res) => {
             const task = req.body;
             const result = await taskCollection.insertOne(task);
-            
+
             res.send(result);
         });
 
         // get task
-        app.get("/tasks", async(req, res) => {
-            const {email} = req.query;
-            const query = {email: email};
+        app.get("/tasks", async (req, res) => {
+            const { email } = req.query;
+            const query = { email: email };
             const result = await taskCollection.find(query).toArray();
 
             res.send(result);
-        })
+        });
+
+        // delete task
+        app.delete("/tasks", async(req, res) => {
+            const email = req.query.email;
+            const result = await taskCollection.deleteMany({email: email});
+
+            res.send(result);
+        });
+
+        // post many obj
+        app.post("/tasks/many", async(req, res) => {
+            const task = req.body;
+            const result = await taskCollection.insertMany(task);
+            res.send(result);
+        });
 
         console.log("Database is connected to MongoDB!");
     } finally {
