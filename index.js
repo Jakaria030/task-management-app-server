@@ -51,10 +51,22 @@ async function run() {
             res.send(result);
         });
 
+        // single item delete
+        app.delete("/tasks/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await taskCollection.deleteOne(query);
+
+            res.send(result);
+        });
+
         // post many obj
         app.post("/tasks/many", async(req, res) => {
-            const task = req.body;
-            const result = await taskCollection.insertMany(task);
+            const tasks = req.body.map(task => ({
+                ...task,
+                _id: new ObjectId(task._id)
+            }));
+            const result = await taskCollection.insertMany(tasks);
             res.send(result);
         });
 
