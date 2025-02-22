@@ -44,9 +44,9 @@ async function run() {
         });
 
         // delete task
-        app.delete("/tasks", async(req, res) => {
+        app.delete("/tasks", async (req, res) => {
             const email = req.query.email;
-            const result = await taskCollection.deleteMany({email: email});
+            const result = await taskCollection.deleteMany({ email: email });
 
             res.send(result);
         });
@@ -54,14 +54,14 @@ async function run() {
         // single item delete
         app.delete("/tasks/:id", async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const result = await taskCollection.deleteOne(query);
 
             res.send(result);
         });
 
         // post many obj
-        app.post("/tasks/many", async(req, res) => {
+        app.post("/tasks/many", async (req, res) => {
             const tasks = req.body.map(task => ({
                 ...task,
                 _id: new ObjectId(task._id)
@@ -70,7 +70,26 @@ async function run() {
             res.send(result);
         });
 
-        console.log("Database is connected to MongoDB!");
+
+        // task update
+        app.put("/tasks/:id", async (req, res) => {
+            const task = req.body;
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+
+            const updatedDoc = {
+                $set: {
+                    ...task
+                }
+            };
+
+            const result = await taskCollection.updateOne(query, updatedDoc);
+
+            res.send(result);
+        });
+
+
+        console.log("MongoDB database is connected!");
     } finally {
         // await client.close();
     }
